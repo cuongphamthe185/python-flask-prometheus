@@ -5,53 +5,57 @@ from datetime import datetime
 import os
 
 # ===== SFTPGo API settings =====
-SFTPGO_BASE_URL = os.getenv("SFTPGO_BASE_URL", "https://sftp-ext.onprem.com,vn/api/v2")
-USERNAME = os.getenv("SFTPGO_DEFAULT_ADMIN_USERNAME",
-                    os.getenv("SFTPGO_USERNAME", "sftp-ext"))
-PASSWORD = os.getenv("SFTPGO_DEFAULT_ADMIN_PASSWORD",
-                    os.getenv("SFTPGO_PASSWORD", ""))
+SFTPGO_BASE_URL = os.getenv(
+    "SFTPGO_BASE_URL", "https://sftp-ext.onprem.vpbank.dev/api/v2"
+)
+USERNAME = os.getenv(
+    "SFTPGO_DEFAULT_ADMIN_USERNAME", os.getenv("SFTPGO_USERNAME", "sftp-ext")
+)
+PASSWORD = os.getenv("SFTPGO_DEFAULT_ADMIN_PASSWORD", os.getenv("SFTPGO_PASSWORD", ""))
 VERIFY_SSL = False
+
 
 def get_access_token():
     r = requests.get(
-        f"{SFTPGO_BASE_URL}/token",
-        auth=(USERNAME, PASSWORD),
-        verify=VERIFY_SSL
+        f"{SFTPGO_BASE_URL}/token", auth=(USERNAME, PASSWORD), verify=VERIFY_SSL
     )
     r.raise_for_status()
     return r.json().get("access_token")
 
+
 def get_users(token):
     headers = {"Authorization": f"Bearer {token}"}
+    r = requests.get(f"{SFTPGO_BASE_URL}/users", headers=headers, verify=VERIFY_SSL)
+    r.raise_for_status()
+    return r.json()
+
+
+def get_event_rules(token):
+    headers = {"Accept": "application/json", "Authorization": f"Bearer {token}"}
     r = requests.get(
-        f"{SFTPGO_BASE_URL}/users",
-        headers=headers,
-        verify=VERIFY_SSL
+        f"{SFTPGO_BASE_URL}/eventrules", headers=headers, verify=VERIFY_SSL
     )
     r.raise_for_status()
     return r.json()
 
-def get_event_rules(token):
-    headers = {
-        "Accept": "application/json",
-        "Authorization": f"Bearer {token}"
-    }
-    r = requests.get(
-        f"{SFTPGO_BASE_URL}/eventrules",
-        headers=headers,
-        verify=VERIFY_SSL
-    )
-    r.raise_for_status()
-    return r.json()
 
 # ===== Flask App =====
 app = Flask(__name__)
 registry = CollectorRegistry()
 
 # Gauges
-total_users_gauge = Gauge("sftpgo_total_users", "Total users in the system", registry=registry)
-users_created_this_year_gauge = Gauge("sftpgo_users_created_this_year", "Users created in the current year", registry=registry)
-webhook_total_gauge = Gauge("sftpgo_webhook_total", "Number of event rules with trigger = 1", registry=registry)
+total_users_gauge = Gauge(
+    "sftpgo_total_users", "Total users in the system", registry=registry
+)
+users_created_this_year_gauge = Gauge(
+    "sftpgo_users_created_this_year",
+    "Users created in the current year",
+    registry=registry,
+)
+webhook_total_gauge = Gauge(
+    "sftpgo_webhook_total", "Number of event rules with trigger = 1", registry=registry
+)
+
 
 @app.route("/metrics")
 def metrics():
@@ -89,5 +93,7 @@ def metrics():
 
     return Response(generate_latest(registry), mimetype="text/plain")
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8195)
+r

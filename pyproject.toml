@@ -1,0 +1,12 @@
+[project]
+name = "sftpgo-metrics"
+version = "0.1.0"
+description = "Custom SFTPGo metrics you actually care about"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask==2.3.3",
+    "gunicorn>=23.0.0",
+    "prometheus-client==0.22.1",
+    "requests==2.31.0",
+]
