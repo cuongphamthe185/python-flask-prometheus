@@ -9,4 +9,5 @@ dependencies = [
     "gunicorn>=23.0.0",
     "prometheus-client==0.22.1",
     "requests==2.31.0",
+    "urllib3>=2.5.0",
 ]

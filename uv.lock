@@ -200,6 +200,7 @@ dependencies = [
     { name = "gunicorn" },
     { name = "prometheus-client" },
     { name = "requests" },
+    { name = "urllib3" },
 ]
 
 [package.metadata]
@@ -208,6 +209,7 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "prometheus-client", specifier = "==0.22.1" },
     { name = "requests", specifier = "==2.31.0" },
+    { name = "urllib3", specifier = ">=2.5.0" },
 ]
 
 [[package]]

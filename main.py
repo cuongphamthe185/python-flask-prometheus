@@ -3,6 +3,7 @@ from prometheus_client import CollectorRegistry, Gauge, generate_latest
 import requests
 from datetime import datetime
 import os
+import urllib3
 
 # ===== SFTPGo API settings =====
 SFTPGO_BASE_URL = os.getenv(
@@ -13,6 +14,10 @@ USERNAME = os.getenv(
 )
 PASSWORD = os.getenv("SFTPGO_DEFAULT_ADMIN_PASSWORD", os.getenv("SFTPGO_PASSWORD", ""))
 VERIFY_SSL = False
+
+# Disable logs warning SSL
+if not VERIFY_SSL:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def get_access_token():
@@ -96,4 +101,3 @@ def metrics():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8195)
-r
